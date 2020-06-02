@@ -1,0 +1,11 @@
+Authorization Flows: https://docs.microsoft.com/en-us/linkedin/shared/authentication/permissions?context=linkedin/context
+https://www.linkedin.com/company/65811177/admin/
+https://www.linkedin.com/developers/apps/53746514/settings
+
+
+https://docs.microsoft.com/en-us/linkedin/shared/references/migrations/default-scopes-migration
+
+https://stackoverflow.com/questions/54265367/how-can-i-change-a-linkedin-apps-permissions
+
+
+Erstellt nach: https://www.freecodecamp.org/news/how-to-authenticate-your-users-with-linkedin-in-asp-net-core-2-0-3f84c5cd2f1b/
