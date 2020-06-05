@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using LinkedInPoc.Mvc.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Mmu.Mlh.ServiceProvisioning.Areas.Initialization.Models;
 using Mmu.Mlh.ServiceProvisioning.Areas.Initialization.Services;
 using Mmu.Mlh.ApplicationExtensions.Areas.Dropbox.Services;
+using LinkedInPoc.Mvc.Services;
 
 namespace LinkedInPoc.Mvc
 {
@@ -46,19 +48,28 @@ namespace LinkedInPoc.Mvc
             registry.AddAuthentication(
                     options =>
                     {
-                        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                         options.DefaultChallengeScheme = "LinkedIn";
                     })
-                .AddCookie()
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddLinkedIn("LinkedIn", options =>
                 {
                     options.ClientId = textLines[0];
                     options.ClientSecret = textLines[1];
                     options.CallbackPath = new PathString("/signin-linkedin");
 
+                    options.SaveTokens = true;
                     options.Scope.Clear();
-                    options.Scope.Add("r_basicprofile");
+                    options.Scope.Add("r_liteprofile");
+                    options.Scope.Add("r_emailaddress");
+                    options.Scope.Add("w_member_social");
+
+                    options.Events.OnCreatingTicket = ticket =>
+                    {
+                        // For some reason, HttpContext.GetTokenAsync("access_token") doesn't work;
+                        LinkedInAccessTokenSingleton.Value = ticket.AccessToken;
+                        return Task.CompletedTask;
+                    };
                 });
 
             registry.AddDbContext<ApplicationDbContext>(options =>
